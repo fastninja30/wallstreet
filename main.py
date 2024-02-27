@@ -1,6 +1,7 @@
-'''
 import reddit_api
 import gpt_api
+'''
+
 
 
 # Sample usages
@@ -16,6 +17,52 @@ response, chat_history = gpt_api.get_response("What is WallStreetPulse")
 from Reddit_Posts import Reddit_Posts
 from datetime import datetime, timedelta
 
+def process_posts_with_gpt(top_authors_info):
+    # Initialize a list to store GPT-3.5 responses with context
+    gpt_responses = []
+
+    # Iterate through each author
+    for author_info in top_authors_info:
+        author = author_info['author']
+
+        # Iterate through each post by the author
+        for post_info in author_info['posts']:
+            post_title = post_info['title']
+            post_content = post_info['content']
+            post_author = post_info['author']  # This seems redundant as you already have 'author'
+
+            # Construct a prompt for GPT-3.5 for the post content
+            post_prompt = f"What stock is this post about? Post title: {post_title}. Post content: {post_content}"
+            post_response = gpt_api.get_response(post_prompt)
+
+            # Store response with context
+            gpt_responses.append({"type": "post", "author": author, "title": post_title, "gpt_response": post_response})
+
+            # Iterate through each comment under the post
+            for comment_info in post_info['comments']:
+                comment_author = comment_info['author']
+                comment_content = comment_info['content']
+
+                # Construct a prompt for GPT-3.5 for the comment content
+                comment_prompt = f"What stock is this comment about? Comment content: {comment_content}"
+                comment_response =  gpt_api.get_response(comment_prompt)
+
+                # Store response with context
+                gpt_responses.append({"type": "comment", "author": comment_author, "content": comment_content, "gpt_response": comment_response})
+
+                # Iterate through each reply under the comment
+                for reply_info in comment_info['replies']:
+                    reply_author = reply_info['author']
+                    reply_content = reply_info['content']
+
+                    # Construct a prompt for GPT-3.5 for the reply content
+                    reply_prompt = f"What stock is this reply about? Reply content: {reply_content}"
+                    reply_response = ask_gpt(reply_prompt)
+
+                    # Store response with context
+                    gpt_responses.append({"type": "reply", "author": reply_author, "content": reply_content, "gpt_response": reply_response})
+
+    return gpt_responses
 def main():
     posts = Reddit_Posts(num_posts=50, subreddit_name="wallstreetbets")
     time_frame_days = 5
