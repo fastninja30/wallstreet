@@ -79,7 +79,7 @@ def analyze_post_responses(posts_info):
 
         # Generate a query based on the post content, title, or other relevant information
         post_content = post_info['posts']
-        query = f"What were the overall responses to the post titled '{post_info['posts']}'?"
+        query = f"Which stock or stocks are being mentioned and is the stock mentioned in a positive or negative way by the poster and the commenters. Post Content: {post_content}"
 
         # Get the GPT model's response
         response, _ = get_response(query)
@@ -87,6 +87,14 @@ def analyze_post_responses(posts_info):
         # Print or process the GPT model's response
         print("GPT response:", response['answer'])
         print("=" * 50)
+
+        # Rerun the query for each GPT string
+        for gpt_string in response['gpt_strings']:
+            print("Rerunning query for GPT string:")
+            print(gpt_string)
+            response, _ = get_response(gpt_string)
+            print("GPT response for rerun:", response['answer'])
+            print("=" * 50)
 
 def get_response(query, chat_history=[], reddit_posts=None):
     print("\n> Input received")
@@ -120,4 +128,4 @@ def get_response(query, chat_history=[], reddit_posts=None):
 
     return answer, chat_history
 
-# Example usage:
+

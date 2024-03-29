@@ -16,13 +16,10 @@ response, chat_history = gpt_api.get_response("What is WallStreetPulse")
 from Reddit_Posts import Reddit_Posts
 from datetime import datetime, timedelta
 from yahoo import getPrice, plot
-#from gpt_test import analyze_post_responses
+from gpt_test import analyze_post_responses
 
 
 def main():
-    posts = Reddit_Posts(num_posts=20, subreddit_name="wallstreetbets")
-    time_frame_days = 2
-    
     '''
     ###test to see posts titles, authors, and comments works
     print(f"Title: {posts.get_title(1)}")
@@ -97,10 +94,10 @@ def main():
     for author, score in author_scores.items():
         print(f"The composite score for {author} is: {score}")
     '''
-    
+    posts = Reddit_Posts(num_posts=20, subreddit_name="wallstreetbets")
+    time_frame_days = 2
     ###Test for top authors
     num_comments=2
-    
     top_authors_info = posts.get_top_authors_info(time_frame_days, num_comments)
     #analyze_post_responses(top_authors_info)
 
@@ -128,20 +125,12 @@ def main():
             print()
     '''
     gpt_strings = posts.getGPTString(top_authors_info)
-    print(gpt_strings[1])
+    for gpt_string in gpt_strings:
+        print(gpt_string)
+        analyze_post_responses(top_authors_info)
     # Print each GPT string
     
-    
-   #GetFacebookInformation = yahooFinance.Ticker("META")
- 
-    # Let us  get historical stock prices for Facebook 
-    # covering the past few years.
-    # max->maximum number of daily prices available 
-    # for Facebook.
-    # Valid options are 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 
-    # 5y, 10y and ytd.
-   # print(GetFacebookInformation.history(period="1mo"))
-    # Example usage
+    '''
     symbol = "GME"
     start_date = "2021-01-13"  # Start date (YYYY-MM-DD)
     end_date = "2021-02-02"  # End date (YYYY-MM-DD)
@@ -149,12 +138,7 @@ def main():
     stock_prices = getPrice(symbol, start_date, end_date)
     if stock_prices is not None:
         plot(stock_prices, symbol)
-    
-    
-    # Get top authors info
-    
-    # Analyze responses for each post
-    
+    '''
     
 
 if __name__ == "__main__":

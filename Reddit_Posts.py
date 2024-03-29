@@ -33,35 +33,6 @@ class Reddit_Posts:
     # return: the author name of the n-th post
     # String
   
-    
-    def get_user_post_frequency(self, username, time_frame_days):
-        # Calculate the timestamp for the specified time frame
-        timestamp_limit = datetime.utcnow() - timedelta(days=time_frame_days)
-        timestamp = int(timestamp_limit.timestamp())
-
-        # Extract the authors from the posts using the get_author method and filter by time frame
-        posts_within_time_frame = [post for post in self.posts if
-                                   post.created_utc > timestamp and post.author and post.author.name == username]
-
-        # Count the frequency of posts for the specified user
-        user_frequency = len(posts_within_time_frame)
-
-        return user_frequency
-    
-    def get_all_authors_post_frequency(self, time_frame_days):
-        # Calculate the timestamp for the specified time frame
-        timestamp_limit = datetime.utcnow() - timedelta(days=time_frame_days)
-        timestamp = int(timestamp_limit.timestamp())
-
-        # Extract the authors from the posts using the get_author method and filter by time frame
-        authors = [post.author.name for post in self.posts if
-                   post.created_utc > timestamp and post.author is not None]
-
-        # Count the frequency of posts for each author
-        author_frequency = Counter(authors)
-
-        return dict(author_frequency)
-    
     ### Updated Method ###
     # Calculate the post frequency, average upvotes per post, upvote to downvote ratio per post,
     # and average comments per post for each unique author in the specified time frame
