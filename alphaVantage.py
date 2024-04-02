@@ -7,7 +7,18 @@ ts = TimeSeries(key='apikeyALPHA.txt', output_format='json')
 
 
 
-
+def getDayData(date, symbol):
+    daily = ts.get_daily(symbol)
+    # Check if the date is available in the data
+    if date in daily[0]:
+        # Get the data for the specified date
+        data_for_date = daily[0][date]
+        # Extract open and close prices
+        open_price = data_for_date['1. open']
+        close_price = data_for_date['4. close']
+        return open_price, close_price
+    else:
+        return None, None  # Return None if the date is not available
 
 def plotMonthly(symbol):
     try:
@@ -130,4 +141,3 @@ def plotDaily(symbol):
         print(f"Failed to plot data: {e}")
 
 
-plotWeekly()
