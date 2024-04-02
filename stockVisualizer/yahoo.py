@@ -32,3 +32,13 @@ def plot(stock_data, symbol):
         
     except Exception as e:
         print(f"Failed to plot data: {e}")
+
+# Sample usage
+if __name__ == "__main__":
+    symbol = "GME"
+    start_date = "2021-01-13"  # Start date (YYYY-MM-DD)
+    end_date = "2021-02-02"  # End date (YYYY-MM-DD)
+
+    stock_prices = getPrice(symbol, start_date, end_date)
+    if stock_prices is not None:
+        plot(stock_prices, symbol)

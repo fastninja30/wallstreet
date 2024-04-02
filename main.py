@@ -13,10 +13,10 @@ response, chat_history = gpt_api.get_response("What is RCOS")
 response, chat_history = gpt_api.get_response("What is WallStreetPulse")
 '''
 
-from Reddit_Posts import Reddit_Posts
+from redditData.Reddit_Posts import Reddit_Posts
 from datetime import datetime, timedelta
-from yahoo import getPrice, plot
-from gpt_test import analyze_post_responses
+from stockVisualizer.yahoo import getPrice, plot
+from textAnalyzer.gpt_test import analyze_post_responses
 
 
 def main():

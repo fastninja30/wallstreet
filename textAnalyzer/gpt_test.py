@@ -8,13 +8,13 @@ from langchain.indexes import VectorstoreIndexCreator
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.vectorstores import Chroma
 import time
-
-# Import Reddit_Posts class from RedditPosts.py
+import json
 
 # https://platform.openai.com/api-keys
 api_base = "https://api.openai.com/v1"
-with open('apikey.txt', 'r') as f:
-    api_key = f.read()
+with open('../Credentials.json', 'r') as file:
+    credentials = json.load(file)
+api_key = credentials["openai"]["api"]
 
 # Types of model to be used, can be found at https://platform.openai.com/docs/models/overview
 model_type = "gpt-3.5-turbo"

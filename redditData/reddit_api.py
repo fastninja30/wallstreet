@@ -1,18 +1,23 @@
 import requests
+import json
+
+with open('../Credentials.json', 'r') as file:
+    credentials = json.load(file)
+
+reddit_creds = credentials['reddit_api']['3']
+
 # Setting up authorization header
-ID = "mGJKXOitGGulU5pBJ9Zmqg"
-SECRIT_KEY = "zZR3V_O4kRdzjJqKZN9-oNluADiHfg"
+ID = reddit_creds['id']
+SECRIT_KEY = reddit_creds['SECRET_KEY']
 auth = requests.auth.HTTPBasicAuth(ID, SECRIT_KEY)
 
-with open('pswd.txt', 'r') as f:
-    pswd = f.read()
 
 # https://www.reddit.com/prefs/apps
 # https://old.reddit.com/prefs/apps/
 data = {
     'grant_type': 'password',
-    'username': 'WallStreetPulse',
-    'password' : pswd
+    'username': reddit_creds['username'],
+    'password' : reddit_creds['password']
 }
 
 headers = {'User-Agent': "WallStreetPulse/0.0.1"}
@@ -30,4 +35,3 @@ def get_hot_posts():
     return requests.get( BASE_URL + "/r/wallstreetbets/hot", headers=headers)
 
 # ADD MORE USEFUL API HERE
-

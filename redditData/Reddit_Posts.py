@@ -1,20 +1,21 @@
 import praw
+import json
 from collections import Counter
 from datetime import datetime, timedelta
 
+with open('../Credentials.json', 'r') as file:
+    credentials = json.load(file)
 
-ID = "mGJKXOitGGulU5pBJ9Zmqg"
-SECRIT_KEY = "zZR3V_O4kRdzjJqKZN9-oNluADiHfg"
-USER_NAME = "WallStreetPulse"
-PASSWORD = "WSPdevteam"
+reddit_creds = credentials['reddit_api']['3']
 
 reddit = praw.Reddit(
-    client_id=ID,
-    client_secret=SECRIT_KEY,
-    username=USER_NAME,
-    password=PASSWORD,
+    client_id=reddit_creds['id'],
+    client_secret=reddit_creds['SECRET_KEY'],
+    password=reddit_creds['password'],
     user_agent="testscript by u/fakebot3",
+    username=reddit_creds['username']
 )
+
 
 class Reddit_Posts:
     def __init__(self, num_posts=10, subreddit_name="wallstreetbets"):
@@ -293,3 +294,4 @@ class Reddit_Posts:
             reply_data.append(reply_info)
 
         return reply_data
+
