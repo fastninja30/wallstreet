@@ -94,40 +94,38 @@ def main():
     for author, score in author_scores.items():
         print(f"The composite score for {author} is: {score}")
     '''
-    posts = Reddit_Posts(num_posts=20, subreddit_name="wallstreetbets")
-    time_frame_days = 2
+    posts = Reddit_Posts(num_posts=10, subreddit_name="wallstreetbets")
+    time_frame_days = 1
     ###Test for top authors
-    num_comments=2
-    top_authors_info = posts.get_top_authors_info(time_frame_days, num_comments)
+    num_comments=1
+    top_posts_info = posts.get_top_posts_info(time_frame_days, num_comments)
     #analyze_post_responses(top_authors_info)
 
     # Print or use the gathered information as needed
     '''
-    for author_info in top_authors_info:
-        print(f"Author: {author_info['author']}")
+    for post_info in top_posts_info:
+        print(f"Author: {post_info['author']}")
+        print(f"  Post Title: {post_info['title']}")
+        print(f"  Post Content: {post_info['content']}")
 
-        # Print information for each post by the author
-        for post_info in author_info['posts']:
-            print(f"  Post Title: {post_info['title']}")
-            print(f"  Post Content: {post_info['content']}")
-            print(f"  Post Author: {post_info['author']}")  # Print the author for each post
+    # Print information for each comment under the post
+    for comment_info in post_info['comments']:
+        print(f"    Comment by {comment_info['author']}: {comment_info['content']}")
 
-            # Print information for each comment under the post
-            for comment_info in post_info['comments']:
-                print(f"    Comment by {comment_info['author']}: {comment_info['content']}")
+        # Print information for each reply under the comment
+        for reply_info in comment_info['replies']:
+            print(f"      Reply by {reply_info['author']}: {reply_info['content']}")
 
-                # Print information for each reply under the comment
-                for reply_info in comment_info['replies']:
-                    print(f"      Reply by {reply_info['author']}: {reply_info['content']}")
+        print()
 
-                print()
-
-            print()
+    print()
     '''
-    gpt_strings = posts.getGPTString(top_authors_info)
+    
+    gpt_strings = posts.getGPTString(top_posts_info)
     for gpt_string in gpt_strings:
-        print(gpt_string)
-        analyze_post_responses(top_authors_info)
+        #print(gpt_string)
+        analyze_post_responses(gpt_string)
+        
     # Print each GPT string
     
     '''

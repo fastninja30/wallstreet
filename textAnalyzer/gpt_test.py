@@ -73,28 +73,14 @@ def extract_stock_mentions(posts_info):
                     })
     return stock_mentions
 
-def analyze_post_responses(posts_info):
-    for post_info in posts_info:
-        print(f"Analyzing responses for post by {post_info['author']}")
-
-        # Generate a query based on the post content, title, or other relevant information
-        post_content = post_info['posts']
-        query = f"Which stock or stocks are being mentioned and is the stock mentioned in a positive or negative way by the poster and the commenters. Post Content: {post_content}"
+def analyze_post_responses(gpt_string):
+    query = f"Does the post mention the GME ticker"
 
         # Get the GPT model's response
-        response, _ = get_response(query)
+    response, _ = get_response(query+gpt_string)
 
-        # Print or process the GPT model's response
-        print("GPT response:", response['answer'])
-        print("=" * 50)
-
-        # Rerun the query for each GPT string
-        for gpt_string in response['gpt_strings']:
-            print("Rerunning query for GPT string:")
-            print(gpt_string)
-            response, _ = get_response(gpt_string)
-            print("GPT response for rerun:", response['answer'])
-            print("=" * 50)
+    #print(response["answer"])
+    print("___________________")
 
 def get_response(query, chat_history=[], reddit_posts=None):
     print("\n> Input received")

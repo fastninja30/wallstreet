@@ -2,11 +2,21 @@ import praw
 import json
 from collections import Counter
 from datetime import datetime, timedelta
+import requests
 
 with open('../Credentials.json', 'r') as file:
     credentials = json.load(file)
 
+<<<<<<< Updated upstream:redditData/Reddit_Posts.py
 reddit_creds = credentials['reddit_api']['3']
+=======
+ID = "S3pOK8bskVjPvEOFPm_pUQ"
+SECRIT_KEY = "blDktDr8IntBnkvNjUU6AggLxDwbZg"
+USER_NAME = "WallStreetPulse"
+PASSWORD = "WSPdevteam"
+>>>>>>> Stashed changes:Reddit_Posts.py
+
+base_url = "https://www.googleapis.com/customsearch/v1"
 
 reddit = praw.Reddit(
     client_id=reddit_creds['id'],
@@ -33,7 +43,30 @@ class Reddit_Posts:
     #   n: the number of the post
     # return: the author name of the n-th post
     # String
-  
+    def search_by_time_period(start_date = "20231203", end_date = "20240110"):
+        article_ids = []
+        num = 10
+        while(int(start_date) < int(end_date) and num == 10):
+            print(f'Request from Google: {start_date} {end_date}')
+            params = {
+                "key": "AIzaSyBG2uCYJDwpZLlVcsmracUk3zRSJZMpn98", # The API key
+                "cx": "b3dc3b1ce374e440c", # The CSE ID
+                "q": "reddit", # The search query
+                "sort": f"date:r:{start_date}:{end_date}", # The date range filter
+                "num": 10 # The number of results to return
+            }
+            response = requests.get(base_url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                num = len(data["items"])
+                for item in data["items"]:
+                    article_ids.append(item['link'].split('/')[-3])
+                    date_obj = datetime.strptime(item['snippet'][:12].lstrip().rstrip(), "%b %d, %Y")
+                    start_date = max(date_obj.strftime("%Y%m%d"),start_date)
+            else:
+                print(f"Request failed with status code {response.status_code}")
+        print("Finished all requests")
+        return article_ids
     ### Updated Method ###
     # Calculate the post frequency, average upvotes per post, upvote to downvote ratio per post,
     # and average comments per post for each unique author in the specified time frame
@@ -95,7 +128,7 @@ class Reddit_Posts:
 
         return author_scores
     
-    def get_top_authors_info(self, time_frame_days, num_comments):
+    def get_top_posts_info(self, time_frame_days, num_comments, posts_per_author=1):
     # Get post statistics and author scores
         authors_frequency, authors_average_upvotes, authors_upvote_to_downvote_ratio, authors_average_comments = self.get_all_authors_post_stats(time_frame_days)
 
@@ -105,92 +138,90 @@ class Reddit_Posts:
         # Sort authors based on their scores (descending order)
         sorted_authors = sorted(author_scores.items(), key=lambda x: x[1], reverse=True)
         
-        # Take the top 10 authors
-        top_authors = sorted_authors[:10]
-
-        # Gather information for each top author
-        author_info = []
+        # Gather information for the top posts from the top authors
+        top_posts_info = []
         
-        for author, _ in top_authors:
-            # Get titles, content, comments, and replies
-            posts_info = []
+        for author, _ in sorted_authors[:5]:
+            # Track the number of posts retrieved for the current author
+            posts_retrieved = 0
+            
+            # Find posts by the current author
             for post_index in range(len(self.posts)):
-                title = self.get_title(post_index)
-                content = self.get_content(post_index)
-                upvotes = self.get_upvotes(post_index)
-                downvotes = self.get_downvotes(post_index)
-                author_name = self.get_author(post_index)  # Get the author name for the current post
-                comments = self.get_comments(post_index, num_comments)
-                comment_data = []
-                for comment_info in comments:
-                    comment_data.append({
-                        'author': comment_info['author'],
-                        'upvotes': comment_info['upvotes'],
-                        'downvotes': comment_info['downvotes'],
-                        'content': comment_info['content'],
-                        'replies': comment_info['replies']
+                if self.get_author(post_index) == author:
+                    # Get information for the current post
+                    title = self.get_title(post_index)
+                    content = self.get_content(post_index)
+                    upvotes = self.get_upvotes(post_index)
+                    downvotes = self.get_downvotes(post_index)
+                    comments = self.get_comments(post_index, num_comments)
+                    comment_data = []
+                    for comment_info in comments:
+                        comment_data.append({
+                            'author': comment_info['author'],
+                            'upvotes': comment_info['upvotes'],
+                            'downvotes': comment_info['downvotes'],
+                            'content': comment_info['content'],
+                            'replies': comment_info['replies']
+                        })
+                    
+                    # Store the information for the current post in a dictionary
+                    top_posts_info.append({
+                        'title': title,
+                        'content': content,
+                        'author': author,
+                        'comments': comment_data,
+                        'upvotes': upvotes,
+                        'downvotes': downvotes
                     })
-                posts_info.append({
-                    'title': title,
-                    'content': content,
-                    'author': author_name,  # Store the author name for the current post
-                    'comments': comment_data,
-                    'upvotes':upvotes,
-                    'downvotes':downvotes
-                })
-
-            # Store the information in a dictionary
-            author_info.append({
-                'author': author,
-                'posts': posts_info
-                
-            })
-
-        return author_info
+                    
+                    posts_retrieved += 1
+                    
+                    if posts_retrieved >= posts_per_author:
+                        break  # Move to the next author after retrieving the desired number of posts
+           
+            if len(top_posts_info) >= len(sorted_authors) * posts_per_author:
+                break  # Exit loop if we have gathered enough posts
+            if posts_retrieved < posts_per_author:
+                print(f"Warning: Author '{author}' has fewer than {posts_per_author} posts.")
+                    
+        return top_posts_info
     
-    
-    def getGPTString(self, author_info):
-    
+    def getGPTString(self, top_posts_info):
         gpt_strings = []  # List to store the GPT strings for each post
         
-        for author_post in author_info:
-            author = author_post['author']
-            posts = author_post['posts']
+        for post_info in top_posts_info:
+            title = post_info['title']
+            content = post_info['content']
+            author_name = post_info['author']
+            upvotes = post_info['upvotes']
+            downvotes = post_info['downvotes']
             
-            for post_info in posts:
-                title = post_info['title']
-                content = post_info['content']
-                author_name = post_info['author']
-                upvotes = post_info['upvotes']
-                downvotes = post_info['downvotes']
+            gpt_string = f"Post Title: {title}\n"
+            gpt_string += f"  Post Content: {content}\n"
+            gpt_string += f"  Post Author: {author_name}\n"
+            gpt_string += f"  Post Upvotes: {upvotes}\n"
+            gpt_string += f"  Post Downvotes: {downvotes}\n"
+            
+            # Add comments and replies
+            for comment_data in post_info['comments']:
+                comment_author = comment_data['author']
+                comment_content = comment_data['content']
+                comment_upvotes = comment_data['upvotes']
+                comment_downvotes = comment_data['downvotes']
                 
+                gpt_string += f"    Comment by {comment_author}: {comment_content}\n"
+                gpt_string += f"    Comment Upvotes: {comment_upvotes}\n"
+                gpt_string += f"    Comment Downvotes: {comment_downvotes}\n"
                 
-                gpt_string = f"Post Title: {title}\n"
-                gpt_string += f"  Post Content: {content}\n"
-                gpt_string += f"  Post Author: {author_name}\n"
-                gpt_string += f"  Post Upvotes: {upvotes}\n"
-                gpt_string += f"  Post Downvotes: {downvotes}\n"
-                
-                # Add comments and replies
-                for comment_data in post_info['comments']:
-                    comment_author = comment_data['author']
-                    comment_content = comment_data['content']
-                    comment_upvotes = comment_data['upvotes']
-                    comment_downvotes = comment_data['downvotes']
+                # Add replies
+                for reply in comment_data['replies']:
+                    reply_author = reply['author']
+                    reply_content = reply['content']
                     
-                    gpt_string += f"    Comment by {comment_author}: {comment_content}\n"
-                    gpt_string += f"    Comment Upvotes: {comment_upvotes}\n"
-                    gpt_string += f"    Comment Downvotes: {comment_downvotes}\n"
-                    
-                    # Add replies
-                    for reply in comment_data['replies']:
-                        reply_author = reply['author']
-                        reply_content = reply['content']
-                        
-                        gpt_string += f"      Reply by {reply_author}: {reply_content}\n"
-                
-                # Add the constructed string to the list
-                gpt_strings.append(gpt_string)
+                    gpt_string += f"      Reply by {reply_author}: {reply_content}\n"
+            
+            # Add the constructed string to the list
+            gpt_strings.append(gpt_string)
         
         return gpt_strings
 
