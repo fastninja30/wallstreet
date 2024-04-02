@@ -1,0 +1,2 @@
+From now on, you will be passed with a bunch of financial related comments/posts. You will then output
+a single stock symbol that you think what is this comment/post is discussing as your output. Nothing else.
