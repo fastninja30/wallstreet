@@ -23,35 +23,33 @@ def getMonthlyLow():
 
 
 def plotDaily():
-    # closing values
-    xVal1s = []
+    # Lists to store dates and prices
+    xVal = []
+    yVal_open = []
+    yVal_close = []
 
-    for data_dict in daily[0].items():
-        xVal1 = data_dict[0]
-        if xVal1:
-            xVal1s.append(xVal1)
-    # List to store close prices
-    yVal1s = []
+    # Iterate through the dictionary to extract dates and prices
+    for date, data_dict in daily[0].items():
+        xVal.append(date)
+        open_price = data_dict.get('1. open')
+        close_price = data_dict.get('4. close')
+        if open_price:
+            yVal_open.append(float(open_price))  # Convert to float for plotting
+        if close_price:
+            yVal_close.append(float(close_price))  # Convert to float for plotting
 
-    # Iterate through the dictionary to extract close prices for each date
-    for data_dict in daily[0].items():
-        yVal1 = data_dict[1].get('1. open')
-        if yVal1:
-            yVal1s.append(yVal1)
+    # Plotting
+    plt.plot(xVal, yVal_open, label="OPEN")
+    plt.plot(xVal, yVal_close, label="CLOSE")
 
-    plt.plot(xVal1s, yVal1s, label="OPEN")
+    # Adding labels and legend
+    plt.xlabel('Date')
+    plt.ylabel('Price')
+    plt.title('Daily Open and Close Prices')
+    plt.legend()
+    # Adjusting x-axis margins (10% margin on each side)
+    plt.margins(x=.04)
+    plt.show()
 
-    #closing values
-    xVal2 = [key for key in daily[0].items()]
-    # List to store close prices
-    yVal2s = []
-
-    # Iterate through the dictionary to extract close prices for each date
-    for data_dict in daily[0].items():
-        yVal2 = data_dict[1].get('4. close')
-        if yVal2:
-            yVal2s.append(yVal2)
-
-    #plt.plot(xVal2, yVal2, label="CLOSE")
 
 plotDaily()
