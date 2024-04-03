@@ -1,9 +1,13 @@
 from alpha_vantage.timeseries import TimeSeries
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 
+with open('../Credentials.json', 'r') as file:
+    credentials = json.load(file)
+api = credentials["alpha-vantage"]["api"]
 
-ts = TimeSeries(key='apikeyALPHA.txt', output_format='json')
+ts = TimeSeries(key=api, output_format='json')
 
 
 
@@ -144,3 +148,4 @@ def plotDaily(symbol):
         print(f"Failed to plot data: {e}")
 
 
+plotMonthly("GME")
