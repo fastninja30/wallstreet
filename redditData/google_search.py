@@ -4,10 +4,15 @@
 # api key: AIzaSyBG2uCYJDwpZLlVcsmracUk3zRSJZMpn98
 import requests
 from datetime import datetime
+import json
 
 # Define the base URL for the Custom Search JSON API
 base_url = "https://www.googleapis.com/customsearch/v1"
 
+
+with open('../Credentials.json', 'r') as file:
+    credentials = json.load(file)
+CSE = credentials['custom_search_engine']
 # params
 #   start_date: string with format %Y%m%d
 #   end_date: string with format %Y%m%d
@@ -19,8 +24,8 @@ def search_by_time_period(start_date = "20231203", end_date = "20240110"):
     while(int(start_date) < int(end_date) and num == 10):
         print(f'Request from Google: {start_date} {end_date}')
         params = {
-            "key": "AIzaSyBG2uCYJDwpZLlVcsmracUk3zRSJZMpn98", # The API key
-            "cx": "b3dc3b1ce374e440c", # The CSE ID
+            "key": CSE['api_key'], # The API key
+            "cx": CSE["CSE_id"], # The CSE ID
             "q": "reddit", # The search query
             "sort": f"date:r:{start_date}:{end_date}", # The date range filter
             "num": 10 # The number of results to return
