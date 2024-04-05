@@ -1,3 +1,8 @@
+###########################################
+DELETE FUNCTION
+#######################################################
+ISSUE #1:
+
 Which table do you want to access? Enter l to list all tables, enter q to quit
 redditPosts
 Enter an action:
@@ -32,3 +37,7 @@ Traceback (most recent call last):
 sqlite3.ProgrammingError: Incorrect number of bindings supplied. The current statement uses 1, and there are 5 supplied.
 
 Process finished with exit code 1
+
+##############################################################################
+Issue #2 (Bug)
+After typing 'd', typing any input other than numbers will crash the program.
