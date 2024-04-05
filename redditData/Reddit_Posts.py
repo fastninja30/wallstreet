@@ -7,14 +7,10 @@ import requests
 with open('../Credentials.json', 'r') as file:
     credentials = json.load(file)
 
-<<<<<<< Updated upstream:redditData/Reddit_Posts.py
+
 reddit_creds = credentials['reddit_api']['3']
-=======
-ID = "S3pOK8bskVjPvEOFPm_pUQ"
-SECRIT_KEY = "blDktDr8IntBnkvNjUU6AggLxDwbZg"
-USER_NAME = "WallStreetPulse"
-PASSWORD = "WSPdevteam"
->>>>>>> Stashed changes:Reddit_Posts.py
+
+
 
 base_url = "https://www.googleapis.com/customsearch/v1"
 
