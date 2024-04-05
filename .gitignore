@@ -1,7 +1,9 @@
 
-apikey.txt
+textAnalyzer/apikey.txt
 __pycache__/
 *.pyc
 
 Wallstreetbets.py
 vader.py
+textAnalyzer/apikey.txt
+.idea/
