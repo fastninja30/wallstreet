@@ -21,18 +21,19 @@
 #       i.   Keep running until user types 'q'
 #
 #   Functions:
-#       add_post()
-#       delete_post()
-#       replace_post()
-#       display_table()
-#       clear_table()
-#       drop_table()
-#       table_modifier()
-#       create_table()
-#       ask_new_table()
-#       check_table_exists()
-#       jump_start_menu()
-
+#       add_post():           Given a new post in the form of a dictionary, adds it into a given table in the database.
+#       delete_post():        Deletes a post corresponding to the postId (unique key) in a given table.
+#       replace_post():       Given a new post in the form of a dictionary, replaces it with another existing post
+#                             with the same postId.
+#       display_table():      Displays all the contents in a table after applying the table_modifier() function.
+#       clear_table():        Erases all the contents in a table after applying the table_modifier() function.
+#       drop_table():         Drops the table after applying the table_modifier() function
+#       table_modifier():     After specifying a table to modify, it prompts the user for commands to modify the table.
+#       create_table():       After a users specifies a name, it creates a table called that name.
+#       ask_new_table():      Prompts the user to confirm to creating a new table called the user's last input.
+#       check_table_exists(): Checks if the user's name matches an already existing table name.
+#       jump_start_menu():    Prompts the user to specify a table name. If name doesn't match, redirect to ask_new_table()
+########################################################################################################################
 
 import sqlite3
 
