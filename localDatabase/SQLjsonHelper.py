@@ -1,3 +1,26 @@
+#################################################################################################
+#░██████╗░██████╗░██╗░░░░░░░░░░██████╗░░█████╗░████████╗░█████╗░██████╗░░█████╗░░██████╗███████╗#
+#██╔════╝██╔═══██╗██║░░░░░░░░░░██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝#
+#╚█████╗░██║██╗██║██║░░░░░░░░░░██║░░██║███████║░░░██║░░░███████║██████╦╝███████║╚█████╗░█████╗░░#
+#░╚═══██╗╚██████╔╝██║░░░░░░░░░░██║░░██║██╔══██║░░░██║░░░██╔══██║██╔══██╗██╔══██║░╚═══██╗██╔══╝░░#
+#██████╔╝░╚═██╔═╝░███████╗░░░░░██████╔╝██║░░██║░░░██║░░░██║░░██║██████╦╝██║░░██║██████╔╝███████╗#
+#╚═════╝░░░░╚═╝░░░╚══════╝░░░░░╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝╚═════╝░╚══════╝#
+#################################################################################################
+#
+#   BY SPENCER SU
+#
+#   1. When user starts the code it will
+#       i.   Connect to 'postDb.db'. If such file doesn't exit, it will create one.
+#       ii.  If no table exists in database yet, it will create a table called redditPosts
+#       iii. Move to jump_start_menu() function (which allows the user to either quit or list all tables)
+#   2. When the code begins running it will
+#       i.   Prompt the user to enter a table to access
+#       ii.  If no table exists, it will prompt the user to create one. Else, it will move to table_modifier()
+#   3. While the code is running it will
+#       i.   Keep running until user types 'q' which is short for quit.
+#
+#
+
 import sqlite3
 
 # https://docs.python.org/3/library/sqlite3.html
