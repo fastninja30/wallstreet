@@ -20,6 +20,12 @@ input_dictionary2 = {
     "likes": 483
 }
 
+input_dictionary3 = {
+    "postId": 96429,
+    "author": "PopStars123",
+    "likes": 4032
+}
+
 
 # Given an input dictionary, adds a new entry(post) to Table table_name
 def add_post(table_name, input_dict):
@@ -31,7 +37,7 @@ def add_post(table_name, input_dict):
     cursor.execute(sql_prompt)
     result = cursor.fetchall()
     if result:
-        print("ERROR: Post already added/ Same postID")
+        print("ERROR: Post already added/ identical postID")
         return
 
     # Creates the sql prompt to insert a post
