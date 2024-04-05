@@ -9,17 +9,30 @@
 #
 #   BY SPENCER SU
 #
+#   Overview:
 #   1. When user starts the code it will
 #       i.   Connect to 'postDb.db'. If such file doesn't exit, it will create one.
-#       ii.  If no table exists in database yet, it will create a table called redditPosts
-#       iii. Move to jump_start_menu() function (which allows the user to either quit or list all tables)
+#       ii.  If no table exists in 'postDb.db' yet, it will create a table called redditPosts
+#       iii. Move to jump_start_menu() function
 #   2. When the code begins running it will
 #       i.   Prompt the user to enter a table to access
 #       ii.  If no table exists, it will prompt the user to create one. Else, it will move to table_modifier()
 #   3. While the code is running it will
-#       i.   Keep running until user types 'q' which is short for quit.
+#       i.   Keep running until user types 'q'
 #
-#
+#   Functions:
+#       add_post()
+#       delete_post()
+#       replace_post()
+#       display_table()
+#       clear_table()
+#       drop_table()
+#       table_modifier()
+#       create_table()
+#       ask_new_table()
+#       check_table_exists()
+#       jump_start_menu()
+
 
 import sqlite3
 
@@ -50,7 +63,7 @@ input_dictionary3 = {
 }
 
 
-# Given an input dictionary, adds a new entry(post) to Table table_name
+# Given an input dictionary, adds a new entry(post) to Table %table_name%
 def add_post(table_name, input_dict):
     # Checks if post already exists in database
     sql_prompt = "SELECT 1 FROM "
@@ -78,6 +91,7 @@ def add_post(table_name, input_dict):
     conn.commit()
 
 
+# Deletes the post associated with the given postId in Table %table_name%
 def delete_post(table_name, postId):
     # Checks if post exists in database
     sql_prompt = "SELECT 1 FROM "
@@ -98,7 +112,7 @@ def delete_post(table_name, postId):
     conn.commit()
 
 
-# Replaces a post with another post which has an identical postID
+# Replaces a post with another post which has an identical postID in table %table_name%
 def replace_post(table_name, old_input_dict, new_input_dict):
     keys = list(old_input_dict.keys())
     keys.pop(0)
@@ -123,6 +137,7 @@ def replace_post(table_name, old_input_dict, new_input_dict):
     conn.commit()
 
 
+# Displays all the contents in Table %table_name%.
 def display_table(table_name):
     sql_prompt = "SELECT COUNT(*) FROM "
     sql_prompt += table_name
@@ -140,11 +155,13 @@ def display_table(table_name):
             print(row)
 
 
+# Clears all the contents in table %table_name%.
 def clear_table(table_name):
     cursor.execute("DELETE FROM " + table_name)
     conn.commit()
 
 
+# Drops(deletes) table %table_name% from the database.
 def drop_table(table_name):
     sql_prompt = "DROP TABLE if EXISTS "
     sql_prompt += table_name
@@ -154,7 +171,7 @@ def drop_table(table_name):
     main()
 
 
-# Modifies the table
+# Prompts for commands to modify Table %main_table_name%.
 def table_modifier(main_table_name):
     action = "0"
     print("Enter an action:\nn - table name\n a - add_post \n d - delete post\n r - replace post\n v - view table\n "
@@ -191,7 +208,7 @@ def table_modifier(main_table_name):
         print("-----------------------------------")
 
 
-# Creates a new table
+# Creates a new table called %main_table_name%
 def create_table(main_table_name):
     sql_prompt = "CREATE TABLE IF NOT EXISTS "
     sql_prompt += main_table_name
@@ -216,7 +233,7 @@ def ask_new_table(main_table_name):
         main()
 
 
-# Check if table exists
+# Check if Table %main_table_name% exists.
 def check_table_exists(main_table_name):
     sql_prompt = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='"
     sql_prompt += main_table_name + "'"
