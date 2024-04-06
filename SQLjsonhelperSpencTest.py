@@ -110,6 +110,9 @@ def add_post(table_name, input_dict):
 
 # Deletes the post associated with the given postId in Table %table_name%
 def delete_post(table_name, postId):
+    if not postId.isnumeric():
+        print("ERROR: Entered postId is not a number")
+        return
     # Checks if post exists in database
     sql_prompt = "SELECT 1 FROM "
     sql_prompt += table_name
@@ -125,7 +128,8 @@ def delete_post(table_name, postId):
     sql_prompt = "DELETE FROM "
     sql_prompt += table_name
     sql_prompt += " WHERE postId = ?"
-    cursor.execute(sql_prompt, postId)
+    postId = int(postId)
+    cursor.execute(sql_prompt, (postId,))
     conn.commit()
 
 
