@@ -13,7 +13,7 @@ response, chat_history = gpt_api.get_response("What is RCOS")
 response, chat_history = gpt_api.get_response("What is WallStreetPulse")
 '''
 
-from Reddit_Posts import Reddit_Posts
+from redditData.Reddit_Posts import Reddit_Posts
 from datetime import datetime, timedelta
 
 
@@ -79,7 +79,7 @@ def main():
     # Print the composite scores
     for author, score in author_scores.items():
         print(f"The composite score for {author} is: {score}")
-    '''
+    
     ###Test for top authors
     num_comments = 5
 
@@ -107,7 +107,18 @@ def main():
                 print()
 
             print()
-
+    '''
+    article_ids = posts.search_by_time_period()
+    post_urls = posts.get_all_post_urls(article_ids)
+    author_stats = posts.get_all_authors_post_stats_from_urls(post_urls)
+    print("Author Statistics:")
+    for author, frequency in author_stats['author_frequency'].items():
+        print(f"Author: {author}")
+        print(f"  Post Frequency: {frequency}")
+        print(f"  Average Upvotes per Post: {author_stats['author_average_upvotes'].get(author, 0)}")
+        print(f"  Upvote to Downvote Ratio: {author_stats['author_upvote_to_downvote_ratio'].get(author, 0)}")
+        print(f"  Average Comments per Post: {author_stats['author_average_comments'].get(author, 0)}")
+        print()
 
 if __name__ == "__main__":
     main()
