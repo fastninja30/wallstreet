@@ -1,4 +1,6 @@
 import requests
+from requests.exceptions import RequestException, JSONDecodeError
+
 # Setting up authorization header
 ID = "mGJKXOitGGulU5pBJ9Zmqg"
 SECRET_KEY = "zZR3V_O4kRdzjJqKZN9-oNluADiHfg"
@@ -99,6 +101,8 @@ class Reddit_API:
     def _get_more_dicts(self, comment, dicts, post_id, depth):
         children = ""
         children_size = len(comment.get('data').get('children'))
+        if children_size == 0:
+            return
         for i in range(0, children_size):
             if i == children_size - 1:
                 children += comment.get('data').get('children')[i]
@@ -106,15 +110,25 @@ class Reddit_API:
                 children += comment.get('data').get('children')[i] + ","
 
         # API request to get hidden replies
-        replies = requests.get(BASE_URL + "/api/morechildren?link_id=t3_" + post_id + "&limit_children=false&depth=" + depth + "&children=" + children,headers=headers).json()
-        if replies.get('jquery')[10][3][0]:
-            reply_count = len(replies.get('jquery')[10][3][0])
-            for i in range(0, reply_count):
-                if replies.get('jquery')[10][3][0][i].get('data').get('body'):
-                    dicts.append(replies.get('jquery')[10][3][0][i].get('data'))
-                # else:
-                #     comment_id = f"{replies.get('jquery')[10][3][0][i].get('data').get('parent_id')}"
-                #     self.get_thread_dict(dicts, post_id, depth, comment_id)
+        try:
+            replies_req = requests.get(
+                BASE_URL + "/api/morechildren?link_id=t3_" + post_id + "&limit_children=false&depth=" + depth + "&children=" + children,
+                headers=headers)
+            replies = replies_req.json()
+            if isinstance(replies.get('jquery'), list):
+                if len(replies.get('jquery')) > 11:
+                    if replies.get('jquery')[10][3]:
+                        if replies.get('jquery')[10][3][0]:
+                            reply_count = len(replies.get('jquery')[10][3][0])
+                            for i in range(0, reply_count):
+                                if replies.get('jquery')[10][3][0][i].get('data').get('body'):
+                                    dicts.append(replies.get('jquery')[10][3][0][i].get('data'))
+                                # else:
+                                #     comment_id = f"{replies.get('jquery')[10][3][0][i].get('data').get('parent_id')}"
+                                #     self.get_thread_dict(dicts, post_id, depth, comment_id)
+        except (RequestException, JSONDecodeError) as e:
+            # Handle the error
+            print("An error occurred while processing the API response:", e)
 
     # Returns a list of dictionaries
     def get_dicts(self, data, dicts, id, depth):
@@ -128,3 +142,50 @@ class Reddit_API:
             # Get the replies to the comment
             if isinstance(data.get('data').get('children')[i].get('data').get('replies'), dict):
                 self.get_dicts(data.get('data').get('children')[i].get('data').get('replies'), dicts, id, depth)
+
+    # TEST FUNCTIONS
+    # Gets a comment and all its replies on a post
+    # comment should be in format post[1].get('data').get('children')[i]
+    def get_comment(self, comment):
+        return comment.get('data').get('body')
+
+    def get_thread(self, post_id, comment_id):
+        thread = requests.get(BASE_URL + "/comments/" + post_id + "/comment/" + comment_id + "/", headers=headers).json()
+        return self.get_comments(thread[1].get('data').get('children')[0].get('data').get('replies'), post_id)
+
+    def get_more_children(self, data, id):
+        # creates a list of children ids separated by
+        children = ""
+        for i in range(0, len(data.get('data').get('children'))):
+            if (i == len(data.get('data').get('children')) - 1):
+                children += data.get('data').get('children')[i]
+            else:
+                children += data.get('data').get('children')[i] + ","
+
+        # API request to get hidden replies
+        replies = requests.get(BASE_URL + "/api/morechildren?link_id=t3_1axhn74&limit_children=false&depth=1000&children=" + children, headers=headers).json()
+        result = ""
+
+        # Check for any replies
+        if replies.get('jquery')[10][3][0]:
+            for i in range(0, len(replies.get('jquery')[10][3][0])):
+                if replies.get('jquery')[10][3][0][i].get('data').get('body'):
+                    result = result + f"{replies.get('jquery')[10][3][0][i].get('data').get('body')}" + "\n"
+                else:
+                    comment_id = f"{replies.get('jquery')[10][3][0][i].get('data').get('parent_id')}"
+                    result = result + f"{self.get_thread(id, comment_id[3:])}" + "\n"
+        return result
+
+    def get_comments(self, data, id):
+        # Prints the direct comments of the post
+        size = len(data.get('data').get('children'))
+        for i in range(0, size):
+            # Check for none type
+            if not self.get_comment(data.get('data').get('children')[i]):
+                print(self.get_more_children(data.get('data').get('children')[i], id))
+            else:
+                print(self.get_comment(data.get('data').get('children')[i]))
+
+            # Print all replies to the comment
+            if isinstance(data.get('data').get('children')[i].get('data').get('replies'), dict):
+                self.get_comments(data.get('data').get('children')[i].get('data').get('replies'), id)
