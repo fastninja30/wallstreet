@@ -18,8 +18,7 @@ from datetime import datetime, timedelta
 
 
 def main():
-    posts = Reddit_Posts(num_posts=50, subreddit_name="wallstreetbets")
-    time_frame_days = 5
+    
 
     '''
     ###test to see posts titles, authors, and comments works
@@ -108,6 +107,8 @@ def main():
 
             print()
     '''
+    posts = Reddit_Posts(num_posts=50, subreddit_name="wallstreetbets")
+    time_frame_days = 5
     article_ids = posts.search_by_time_period()
     post_urls = posts.get_all_post_urls(article_ids)
     author_stats = posts.get_all_authors_post_stats_from_urls(post_urls)

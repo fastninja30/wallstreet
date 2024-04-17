@@ -4,7 +4,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 import requests
 
-with open('../Credentials.json', 'r') as file:
+with open('redditData/Credentials.json', 'r') as file:
     credentials = json.load(file)
 
 
