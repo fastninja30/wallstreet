@@ -41,7 +41,20 @@ def detect_communities(G):
     undirected_G = G.to_undirected()
     partition = community_louvain.best_partition(undirected_G)
     return partition
+    
+# Function to add weighted edges based on interaction count
+def add_weighted_edges(G, df_interactions):
+    for index, row in df_interactions.iterrows():
+        if G.has_edge(row['source_id'], row['target_id']):
+            G[row['source_id']][row['target_id']]['weight'] += row['interaction_count']
+        else:
+            G.add_edge(row['source_id'], row['target_id'], weight=row['interaction_count'])
 
+# Function to get the subgraph of a community
+def get_community_subgraph(G, community_id, partition):
+    nodes_in_community = [node for node in partition if partition[node] == community_id]
+    return G.subgraph(nodes_in_community)
+    
 # Visualize the graph
 visualize_graph(G)
 
