@@ -4,17 +4,13 @@ from collections import Counter
 from datetime import datetime, timedelta
 import requests
 
-with open('../Credentials.json', 'r') as file:
+with open('redditData/Credentials.json', 'r') as file:
     credentials = json.load(file)
 
-<<<<<<< Updated upstream:redditData/Reddit_Posts.py
+
 reddit_creds = credentials['reddit_api']['3']
-=======
-ID = "S3pOK8bskVjPvEOFPm_pUQ"
-SECRIT_KEY = "blDktDr8IntBnkvNjUU6AggLxDwbZg"
-USER_NAME = "WallStreetPulse"
-PASSWORD = "WSPdevteam"
->>>>>>> Stashed changes:Reddit_Posts.py
+
+
 
 base_url = "https://www.googleapis.com/customsearch/v1"
 
@@ -70,6 +66,47 @@ class Reddit_Posts:
     ### Updated Method ###
     # Calculate the post frequency, average upvotes per post, upvote to downvote ratio per post,
     # and average comments per post for each unique author in the specified time frame
+    def get_post_urls(article_ids, subreddit_name='wallstreetbets'):
+        post_urls = []
+        for article_id in article_ids:
+            post_url = f"https://www.reddit.com/r/{subreddit_name}/comments/{article_id}"
+            post_urls.append(post_url)
+        return post_urls
+    
+    def get_all_authors_post_stats_from_urls(post_urls):
+    # Initialize dictionaries to store post statistics for each author
+        author_frequency = Counter()
+        author_upvotes = Counter()
+        author_downvotes = Counter()
+        author_comments = Counter()
+        
+        for url in post_urls:
+            submission = reddit.submission(url=url)
+            submission.comments.replace_more(limit=None)  # Retrieve all comments
+            
+            for comment in submission.comments.list():
+                # Ensure the comment has an author and was created by a human user (not deleted or removed)
+                if comment.author and not comment.author.is_robot:
+                    author_frequency[comment.author.name] += 1
+                    author_upvotes[comment.author.name] += comment.score
+                    author_downvotes[comment.author.name] += comment.downs
+                    author_comments[comment.author.name] += 1
+
+        # Calculate average upvotes per comment, upvote to downvote ratio, and average comments per author
+        author_average_upvotes = {author: (upvotes / max(frequency, 1))  # Avoid division by zero
+                                for author, frequency in author_frequency.items()
+                                for upvotes in [author_upvotes[author]]}
+
+        author_upvote_to_downvote_ratio = {author: (upvotes / max(downvotes, 1))  # Avoid division by zero
+                                        for author, upvotes in author_upvotes.items()
+                                        for downvotes in [author_downvotes[author]]}
+
+        author_average_comments = {author: (comments / max(frequency, 1))  # Avoid division by zero
+                                    for author, frequency in author_frequency.items()
+                                    for comments in [author_comments[author]]}
+
+        return dict(author_frequency), author_average_upvotes, author_upvote_to_downvote_ratio, author_average_comments
+    
     def get_all_authors_post_stats(self, time_frame_days):
         # Calculate the timestamp for the specified time frame
         timestamp_limit = datetime.utcnow() - timedelta(days=time_frame_days)

@@ -32,6 +32,9 @@ The GameStop event highlighted the potential influence of online communities and
 
 Our analysis provided valuable insights into the impact of online communities and social media on real-world financial events. We demonstrated the effectiveness of large language models in understanding the dynamics of these communities and their influence on market behavior.
 
+1. We provide an analysis model specifically for GME stock during the 2021 GME event period. The model aims to determine whether or not the market will crash given a certain date of GME event with adjustable input parameters indicating the community size of individual investors of r/WallStreetBets.
+2. We provide a pipeline that gets the r/WallStreetBets parameters for the provided model. 
+
 ## Future Work
 
 - Experiment with different prompting strategies to extract more specific insights from large language models.
