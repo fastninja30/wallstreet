@@ -13,9 +13,15 @@ def get_post_info(start_date="20231203", end_date="20240110"):
 
         # Insert post information into the 'redditPosts' table
         post_info_to_insert = {
-            "postId": post_info["id"],
-            "author": post_info["author"],
-            "likes": post_info["likes"]
+            "id": post_info["id"],
+            "url": post_info["url"],
+            "article_id": article_id,
+            "poster_username": post_info["author"],
+            "post_content": post_info["content"],
+            "published_date": post_info["published_date"],
+            "visited_date": post_info["visited_date"],
+            "upvotes": post_info["upvotes"],
+            "downvotes": post_info["downvotes"]
         }
         SQLjsonHelper.add_post("redditPosts", post_info_to_insert)
 
@@ -23,7 +29,8 @@ def get_post_info(start_date="20231203", end_date="20240110"):
         comments = post_info.get("comments", [])
         for comment in comments:
             comment_info_to_insert = {
-                "article_id": post_info["id"],
+                "id": comment["id"],
+                "article_id": article_id,
                 "username": comment["username"],
                 "content": comment["content"],
                 "parent_comment_id": comment.get("parent_comment_id", None),
@@ -31,6 +38,5 @@ def get_post_info(start_date="20231203", end_date="20240110"):
                 "downvotes": comment["downvotes"]
             }
             SQLjsonHelper.add_comment("comments", comment_info_to_insert)
-
 if __name__ == "__main__":
     get_post_info()
