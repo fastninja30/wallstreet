@@ -7,6 +7,7 @@
 # table 2 for comments; id, article id(to know which post this comment is under), username, content, parent, comment id.
 import pandas as pd
 import User2User
+import User2Posts
 
 df_posts = pd.read_csv('posts.csv')
 df_comments = pd.read_csv('comments.csv')
@@ -32,6 +33,19 @@ immune_users = [user for user, info in results.items() if info['immune']]
 
 print(f"Engaged Users: {engaged_users}")
 print(f"Immune Users: {immune_users}")
+
+
+from operator import itemgetter
+
+# Get user nodes only
+user_nodes = [n for n, d in User2Posts.bipartite_graph.nodes(data=True) if d['bipartite'] == 1]
+
+# Calculate the degree of each user node
+user_degrees = User2Posts.bipartite_graph.degree(user_nodes)
+sorted_user_degrees = sorted(user_degrees, key=itemgetter(1), reverse=True)
+
+print("Top 5 active users by connections:")
+print(sorted_user_degrees[:5])
 
 
 
