@@ -10,19 +10,20 @@ def get_post_info(start_date="20231203", end_date="20240110"):
     for article_id in article_ids:
         post_data = api.get_post_data(article_id, "1000")
         post_info = api.get_post_dict(post_data[0])
-
+        print(post_info)
         # Insert post information into the 'redditPosts' table
         post_info_to_insert = {
             "id": post_info["id"],
             "url": post_info["url"],
             "article_id": article_id,
             "poster_username": post_info["author"],
-            "post_content": post_info["content"],
-            "published_date": post_info["published_date"],
-            "visited_date": post_info["visited_date"],
-            "upvotes": post_info["upvotes"],
-            "downvotes": post_info["downvotes"]
+            "post_content": post_info["selftext"],
+            "published_date": post_info["created_utc"],
+            "visited_date": post_info["created_utc"],  # Assuming visited date is the same as published date
+            "upvotes": post_info["ups"],
+            "downvotes": post_info["downs"]
         }
+        SQLjsonHelper.create_table("redditPosts")  # Create redditPosts table if not exists
         SQLjsonHelper.add_post("redditPosts", post_info_to_insert)
 
         # Insert comments into the 'comments' table
@@ -34,9 +35,11 @@ def get_post_info(start_date="20231203", end_date="20240110"):
                 "username": comment["username"],
                 "content": comment["content"],
                 "parent_comment_id": comment.get("parent_comment_id", None),
-                "upvotes": comment["upvotes"],
-                "downvotes": comment["downvotes"]
+                "upvotes": comment["ups"],
+                "downvotes": comment["downs"]
             }
+            SQLjsonHelper.create_table("comments")  # Create comments table if not exists
             SQLjsonHelper.add_comment("comments", comment_info_to_insert)
+
 if __name__ == "__main__":
     get_post_info()
