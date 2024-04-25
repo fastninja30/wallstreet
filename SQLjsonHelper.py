@@ -16,6 +16,8 @@ input_dictionary = {
 
 
 def add_post(table_name, input_dict):
+    conn = sqlite3.connect('postDB.db')
+    cursor = conn.cursor()
     # Checks if post already exists in database
     sql_prompt = "SELECT 1 FROM "
     sql_prompt += table_name
