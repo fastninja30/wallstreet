@@ -8,6 +8,7 @@
 import pandas as pd
 import User2User
 import User2Posts
+import userScore
 
 df_posts = pd.read_csv('posts.csv')
 df_comments = pd.read_csv('comments.csv')
@@ -47,5 +48,10 @@ sorted_user_degrees = sorted(user_degrees, key=itemgetter(1), reverse=True)
 print("Top 5 active users by connections:")
 print(sorted_user_degrees[:5])
 
+# Calculate the user scores using the function
+user_scores = userScore.calculate_user_scores(User2User.bipartite_graph)
+
+# Print or process the calculated scores
+print(user_scores)
 
 
