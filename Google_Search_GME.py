@@ -4,12 +4,6 @@ from localDatabase.SQL import *
 
 SQL = SQL("postDB.db")
 '''
-    "0": {
-      "CSE_id": "b3dc3b1ce374e440c",
-      "api_key": "AIzaSyBG2uCYJDwpZLlVcsmracUk3zRSJZMpn98"
-    },
-'''
-'''
 data = SQL.search("google_search", order_by="Created_date DESC", limit=1)[0]
 if len(data) != 0:
     start_date = data['Created_date']
