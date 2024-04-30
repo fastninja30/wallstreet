@@ -82,6 +82,19 @@ class SQL:
 
         return results
 
+    def execute(self, query):
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        column_names = [description[0] for description in self.cursor.description]
+
+        results = []
+        for row in rows:
+            result = {col: val for col, val in zip(column_names, row)}
+            results.append(result)
+
+        self.conn.commit()
+        return results
+
     #######################################################################
     # Helper fuctions
     def quote_condition(self, condition):
