@@ -50,11 +50,11 @@ for result in data_list:
             "id": id,
             "title": title,
             "URL": URL,
-            "Created_date": created_date,
-            "Poster_name": poster_name,
-            "Votes": votes,
-            "Comments": comments,
-            "Is_visited": "False"
+            "created_date": created_date,
+            "author": poster_name,
+            "votes": votes,
+            "num_comments": comments,
+            "is_visited": "False"
         }
         SQL.insert("google_search", post_info)
 

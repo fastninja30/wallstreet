@@ -34,7 +34,7 @@ class SQL:
             self.cursor.execute(insert_query, values)
             self.conn.commit()
         else:
-            print("Duplicate entry. Update table")
+            # print("Duplicate entry. Update table")
             first_column = columns[0]
             first_value = values[0]
             update_data = {col: val for col, val in zip(columns[1:], values[1:])}
@@ -100,18 +100,31 @@ class SQL:
         except ValueError:
             return False
 
-    def print_table(self, table_name):
-        select_query = f"SELECT * FROM {table_name}"
+    def print_table(self, table_name, truncate=True, limit=10):
+        select_query = f"SELECT * FROM {table_name} LIMIT {limit}"
         self.cursor.execute(select_query)
         rows = self.cursor.fetchall()
 
         # Get the column names
         column_names = [description[0] for description in self.cursor.description]
+
+        # Truncate column names if longer than 40 characters
+        if truncate:
+            column_names = [col[:40] if len(col) > 40 else col for col in column_names]
+
         print(" | ".join(column_names))
         print("-" * (sum(len(col) for col in column_names) + 3 * (len(column_names) - 1)))
 
         for row in rows:
-            print(" | ".join(str(item) for item in row))
+            if truncate:
+                # Truncate values if longer than 40 characters
+                truncated_row = [str(item)[:40] if len(str(item)) > 40 else str(item) for item in row]
+            else:
+                truncated_row = [str(item) for item in row]
+            print(" | ".join(truncated_row))
+
+        if len(rows) == limit:
+            print(f"\nShowing first {limit} rows. Use a higher limit to see more rows.")
 
     def table_exists(self, table_name):
         self.cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
