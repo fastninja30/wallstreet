@@ -9,3 +9,4 @@ textAnalyzer/apikey.txt
 .idea/
 redditData/Credentials.json
 apikey.txt
+.DS_Store
