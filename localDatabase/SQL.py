@@ -123,7 +123,7 @@ class SQL:
 
         # Truncate column names if longer than 40 characters
         if truncate:
-            column_names = [col[:40] if len(col) > 40 else col for col in column_names]
+            column_names = [col[:60] if len(col) > 60 else col for col in column_names]
 
         print(" | ".join(column_names))
         print("-" * (sum(len(col) for col in column_names) + 3 * (len(column_names) - 1)))
@@ -131,7 +131,7 @@ class SQL:
         for row in rows:
             if truncate:
                 # Truncate values if longer than 40 characters
-                truncated_row = [str(item)[:40] if len(str(item)) > 40 else str(item) for item in row]
+                truncated_row = [str(item)[:60] if len(str(item)) > 60 else str(item) for item in row]
             else:
                 truncated_row = [str(item) for item in row]
             print(" | ".join(truncated_row))
