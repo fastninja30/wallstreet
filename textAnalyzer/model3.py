@@ -51,8 +51,10 @@ centrality_df = pd.DataFrame(list(degree_centrality.items()), columns=['author',
 # Sort users by their centrality score
 centrality_df = centrality_df.sort_values(by='degree_centrality', ascending=False)
 
-# Print the scores
-print(centrality_df)
+# Export to CSV, save in the same directory as the database
+output_file_path = '../data/user_centrality_scores.csv'  # Adjust path as necessary
+centrality_df.to_csv(output_file_path, index=False)
 
+print(f"Centrality scores saved to {output_file_path}")
 # Close the connection
 conn.close()
