@@ -88,22 +88,24 @@ def search(start_date = "20231203", end_date = "20240110"):
             "num": 10 # The number of results to return
         }
         response = requests.get(base_url, params=params)
-        if response.status_code == 200:
-            data = response.json()
-            num = len(data["items"])
-            data_list.append(data)
-            for item in data["items"]:
-                date_obj = datetime.strptime(item['snippet'][:12].lstrip().rstrip(), "%b %d, %Y")
-                start_date = max(date_obj.strftime("%Y%m%d"),start_date)
-        else:
-            print(f"Request failed with status code {response.status_code}")
+        try:
+            if response.status_code == 200:
+                data = response.json()
+                num = len(data["items"])
+                data_list.append(data)
+                for item in data["items"]:
+                    date_obj = datetime.strptime(item['snippet'][:12].lstrip().rstrip(), "%b %d, %Y")
+                    start_date = max(date_obj.strftime("%Y%m%d"),start_date)
+            else:
+                print(f"Request failed with status code {response.status_code}")
+        except:
+            pass
+
 
     if i == thres:
         print("exceed maximum retries")
     print("Finished all requests")
     return data_list
-
-
 
 if __name__ == "__main__":
     print(search())

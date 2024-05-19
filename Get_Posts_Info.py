@@ -5,6 +5,9 @@ from tqdm import tqdm
 
 import praw
 import random
+
+SQL = SQL("lateGME.db")
+
 try:
     current_dir = os.getcwd()
     credentials_path = os.path.join(current_dir, '../Credentials.json')
@@ -28,7 +31,7 @@ except:
 base_url = "https://www.googleapis.com/customsearch/v1"
 reddit_keys = list(credentials['reddit_api'].keys())
 # reddit_creds = credentials['reddit_api'][random.choice(reddit_keys)]
-reddit_creds = credentials['reddit_api']['2']
+reddit_creds = credentials['reddit_api']['6']
 reddit = praw.Reddit(
     client_id=reddit_creds['id'],
     client_secret=reddit_creds['SECRET_KEY'],
@@ -82,7 +85,7 @@ def get_reddit_post_info(post_id):
         return None
 
 
-SQL = SQL("postDB.db")
+
 # posts = SQL.search("google_search")
 posts = SQL.search("google_search", "is_visited=False")
 for post in tqdm(posts):
